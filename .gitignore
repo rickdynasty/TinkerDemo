@@ -1,0 +1,11 @@
+*.iml
+/bin/*
+/gen/*
+gradle/
+.gradle/*
+/local.properties
+/.idea/*
+/build
+/captures
+.externalNativeBuild
+/TinkerDemo.iml

@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">TinkerDemo</string>
+    <string name="test_des">当前是有bug的版本</string>
+</resources>
