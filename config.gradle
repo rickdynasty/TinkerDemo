@@ -13,15 +13,20 @@ ext {
             // ORG_GRADLE_PROJECT_Jenkins_build_num定义在build.sh中
             buildNo = Jenkins_build_num
             versionCode = Integer.valueOf(buildNo)
+        } else {
+            buildNo = "100"
         }
     } else {
-        versionCode = Integer.valueOf("32" + dateTime);
+        versionCode = Integer.valueOf("12" + dateTime);
     }
 
+    //version 1.0
     versionName = "1.0." + dateTime + "." + buildNo;
 
     println "version code : " + versionCode
     println "version name : " + versionName
+
+    channelId = "10000"
 
     buildtools = "25.0.3"
     minSdkVersion = 19

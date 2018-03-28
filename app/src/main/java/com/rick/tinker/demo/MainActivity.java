@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     public void loadPatch() {
         TinkerInstaller.onReceiveUpgradePatch(getApplicationContext(),
-                Environment.getExternalStorageDirectory().getAbsolutePath() + "/myTinkerDemo/TinkerPatch");
+                Environment.getExternalStorageDirectory().getAbsolutePath() + "/myTinkerDemo/patch_signed_7zip.apk");
     }
 
     /**
