@@ -2,89 +2,50 @@ import java.text.SimpleDateFormat
 
 apply plugin: 'com.android.application'
 
-def javaVersion = JavaVersion.VERSION_1_7
-android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildtools
 
-    compileOptions {
-        sourceCompatibility javaVersion
-        targetCompatibility javaVersion
-    }
-    //recommend
-    dexOptions {
-        jumboMode = true
-    }
-
-
-    defaultConfig {
-        applicationId "com.rick.tinker.demo"
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode rootProject.ext.versionCode
-        versionName rootProject.ext.versionName
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
-        buildConfigField "String", "MESSAGE", "\"I am the base apk\""
-
-        buildConfigField "String", "TINKER_ID", "\"${getTinkerIdValue()}\""
-        buildConfigField "String", "PLATFORM", "\"all\""
-    }
-
-    signingConfigs {
-        release {
-            try {
-                storeFile file("./keystore/TinkerDemo.keystore")
-                storePassword "TinkerDemo"
-                keyAlias "TinkerDemo"
-                keyPassword "TinkerDemo"
-            } catch (ex) {
-                throw new InvalidUserDataException(ex.toString())
-            }
-        }
-
-        debug {
-            storeFile file("./keystore/TinkerDemo.keystore")
-            storePassword "TinkerDemo"
-            keyAlias "TinkerDemo"
-            keyPassword "TinkerDemo"
-        }
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled true
-            signingConfig signingConfigs.release
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-        debug {
-            debuggable true
-            minifyEnabled false
-            signingConfig signingConfigs.debug
-        }
-    }
-
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ['libs']
-        }
-    }
-}
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile "com.android.support:appcompat-v7:23.1.1"
-    testCompile 'junit:junit:4.12'
+    /*if (is_gradle_3()) {
+        implementation fileTree(dir: 'libs', include: ['*.jar'])
+        testImplementation 'junit:junit:4.12'
+        implementation "com.android.support:appcompat-v7:23.1.1"
+        implementation("com.tencent.tinker:tinker-android-lib:${TINKER_VERSION}") { changing = true }
+        annotationProcessor("com.tencent.tinker:tinker-android-anno:${TINKER_VERSION}") { changing = true }
+        compileOnly("com.tencent.tinker:tinker-android-anno:${TINKER_VERSION}") { changing = true }
 
+        implementation "com.android.support:multidex:1.0.1"
+        //use to test multiDex
+//    implementation group: 'com.google.guava', name: 'guava', version: '19.0'
+//    implementation "org.scala-lang:scala-library:2.11.7"
+
+        //use for local maven test
+//        implementation("com.tencent.tinker:tinker-android-loader:${TINKER_VERSION}") { changing = true }
+//        implementation("com.tencent.tinker:aosp-dexutils:${TINKER_VERSION}") { changing = true }
+//        implementation("com.tencent.tinker:bsdiff-util:${TINKER_VERSION}") { changing = true }
+//        implementation("com.tencent.tinker:tinker-ziputils:${TINKER_VERSION}") { changing = true }
+//        implementation("com.tencent.tinker:tinker-commons:${TINKER_VERSION}") { changing = true }
+    } else {*/
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile "com.android.support:appcompat-v7:23.1.1"
     //可选，用于生成application类
     compile("com.tencent.tinker:tinker-android-lib:${TINKER_VERSION}") { changing = true }
     //tinker的核心库
     provided("com.tencent.tinker:tinker-android-anno:${TINKER_VERSION}") { changing = true }
+
     compile "com.android.support:multidex:1.0.1"
+
+    //use to test multiDex
+//    compile group: 'com.google.guava', name: 'guava', version: '19.0'
+//    compile "org.scala-lang:scala-library:2.11.7"
+
+    //use for local maven test
+//        compile("com.tencent.tinker:tinker-android-loader:${TINKER_VERSION}") { changing = true }
+//        compile("com.tencent.tinker:aosp-dexutils:${TINKER_VERSION}") { changing = true }
+//        compile("com.tencent.tinker:bsdiff-util:${TINKER_VERSION}") { changing = true }
+//        compile("com.tencent.tinker:tinker-ziputils:${TINKER_VERSION}") { changing = true }
+//        compile("com.tencent.tinker:tinker-commons:${TINKER_VERSION}") { changing = true }
+//    }
 }
 
 def gitSha() {
@@ -100,23 +61,119 @@ def gitSha() {
     }
 }
 
-def tinkerOutPath = file("${buildDir}/tinkerOutputs/")
+def javaVersion = JavaVersion.VERSION_1_7
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildtools
 
+    compileOptions {
+        sourceCompatibility javaVersion
+        targetCompatibility javaVersion
+    }
+    //recommend
+    dexOptions {
+        jumboMode = true
+    }
+
+    signingConfigs {
+        release {
+            try {
+                storeFile file("./keystore/release.keystore")
+                storePassword "TinkerDemo"
+                keyAlias "TinkerDemo"
+                keyPassword "TinkerDemo"
+            } catch (ex) {
+                throw new InvalidUserDataException(ex.toString())
+            }
+        }
+
+        debug {
+            storeFile file("./keystore/debug.keystore")
+        }
+    }
+
+
+    defaultConfig {
+        applicationId "com.rick.tinker.demo"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
+        /**
+         * you can use multiDex and install it in your ApplicationLifeCycle implement
+         */
+        multiDexEnabled true
+        /**
+         * buildConfig can change during patch!
+         * we can use the newly value when patch
+         */
+        buildConfigField "String", "MESSAGE", "\"I am the base apk\""
+//        buildConfigField "String", "MESSAGE", "\"I am the patch apk\""
+        /**
+         * client version would update with patch
+         * so we can get the newly git version easily!
+         */
+        buildConfigField "String", "TINKER_ID", "\"${getTinkerIdValue()}\""
+        buildConfigField "String", "PLATFORM", "\"all\""
+    }
+
+//    aaptOptions{
+//        cruncherEnabled false
+//    }
+
+//    //use to test flavors support
+//    productFlavors {
+//        flavor1 {
+//            applicationId 'tinker.sample.android.flavor1'
+//        }
+//
+//        flavor2 {
+//            applicationId 'tinker.sample.android.flavor2'
+//        }
+//    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), project.file('proguard-rules.pro')
+        }
+        debug {
+            debuggable true
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+        }
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+}
+
+def bakPath = file("${buildDir}/bakApk/")
+
+/**
+ * you can use assembleRelease to build you base apk
+ * use tinkerPatchRelease -POLD_APK=  -PAPPLY_MAPPING=  -PAPPLY_RESOURCE= to build patch
+ * add apk from the build/bakApk
+ */
 ext {
     //for some reason, you may want to ignore tinkerBuild, such as instant run debug build?
     tinkerEnabled = true
 
     //for normal build
     //old apk file to build patch apk
-    tinkerOldApkPath = "${tinkerOutPath}/app_1.0.180328.100_release_10000.apk"
+    tinkerOldApkPath = "${bakPath}/app-debug-180329-15-38-25.apk"
     //proguard mapping file to build patch apk
-    tinkerApplyMappingPath = "${tinkerOutPath}/app_1.0.180328.100_release_10000_mapping.txt"
+    tinkerApplyMappingPath = "${bakPath}/app-debug-1018-17-32-47-mapping.txt"
     //resource R.txt to build patch apk, must input if there is resource changed
-    tinkerApplyResourcePath = "${tinkerOutPath}/app_1.0.180328.100_release_10000_R.txt"
+    tinkerApplyResourcePath = "${bakPath}/app-debug-180329-15-38-25-R.txt"
 
     //only use for build all flavor, if not, just ignore this field
-    tinkerBuildFlavorDirectory = "${tinkerOutPath}/app-0421-18-03-28"
+    tinkerBuildFlavorDirectory = "${bakPath}/app-1018-17-32-47"
 }
+
 
 def getOldApkPath() {
     return hasProperty("OLD_APK") ? OLD_APK : ext.tinkerOldApkPath
@@ -148,97 +205,120 @@ if (buildWithTinker()) {
 
     tinkerPatch {
         /**
-         * 默认为null
-         * 将旧的apk和新的apk建立关联
-         * 从build / tinkerOutputs添加apk
+         * necessary，default 'null'
+         * the old apk path, use to diff with the new apk to build
+         * add apk from the build/bakApk
          */
         oldApk = getOldApkPath()
         /**
-         * 可选，默认'false'
-         * 有些情况下我们可能会收到一些警告
-         * 如果ignoreWarning为true，我们只是断言补丁过程
-         * case 1：minSdkVersion低于14，但是你使用dexMode与raw。
-         * case 2：在AndroidManifest.xml中新添加Android组件，
-         * case 3：装载器类在dex.loader {}不保留在主要的dex，
-         * 它必须让tinker不工作。
-         * case 4：在dex.loader {}中的loader类改变，
-         * 加载器类是加载补丁dex。改变它们是没有用的。
-         * 它不会崩溃，但这些更改不会影响。你可以忽略它
-         * case 5：resources.arsc已经改变，但是我们不使用applyResourceMapping来构建
+         * optional，default 'false'
+         * there are some cases we may get some warnings
+         * if ignoreWarning is true, we would just assert the patch process
+         * case 1: minSdkVersion is below 14, but you are using dexMode with raw.
+         *         it must be crash when load.
+         * case 2: newly added Android Component in AndroidManifest.xml,
+         *         it must be crash when load.
+         * case 3: loader classes in dex.loader{} are not keep in the main dex,
+         *         it must be let tinker not work.
+         * case 4: loader classes in dex.loader{} changes,
+         *         loader classes is ues to load patch dex. it is useless to change them.
+         *         it won't crash, but these changes can't effect. you may ignore it
+         * case 5: resources.arsc has changed, but we don't use applyResourceMapping to build
          */
         ignoreWarning = false
 
         /**
-         * 可选，默认为“true”
-         * 是否签名补丁文件
-         * 如果没有，你必须自己做。否则在补丁加载过程中无法检查成功
-         * 我们将使用sign配置与您的构建类型
+         * optional，default 'true'
+         * whether sign the patch file
+         * if not, you must do yourself. otherwise it can't check success during the patch loading
+         * we will use the sign config with your build type
          */
         useSign = true
 
         /**
-         可选，默认为“true”
-         是否使用tinker构建
+         * optional，default 'true'
+         * whether use tinker to build
          */
         tinkerEnable = buildWithTinker()
 
         /**
-         * 警告，applyMapping会影响正常的android build！
+         * Warning, applyMapping will affect the normal android build!
          */
         buildConfig {
             /**
-             * 可选，默认为'null'
-             * 如果我们使用tinkerPatch构建补丁apk，你最好应用旧的
-             * apk映射文件如果minifyEnabled是启用！
-             * 警告：你必须小心，它会影响正常的组装构建！
+             * optional，default 'null'
+             * if we use tinkerPatch to build the patch apk, you'd better to apply the old
+             * apk mapping file if minifyEnabled is enable!
+             * Warning:
+             * you must be careful that it will affect the normal assemble build!
              */
             applyMapping = getApplyMappingPath()
             /**
-             * 可选，默认为'null'
-             * 很高兴保持资源ID从R.txt文件，以减少java更改
+             * optional，default 'null'
+             * It is nice to keep the resource id from R.txt file to reduce java changes
              */
             applyResourceMapping = getApplyResourceMappingPath()
 
             /**
-             * 必需，默认'null'
-             * 因为我们不想检查基地apk与md5在运行时（它是慢）
-             * tinkerId用于在试图应用补丁时标识唯一的基本apk。
-             * 我们可以使用git rev，svn rev或者简单的versionCode。
-             * 我们将在您的清单中自动生成tinkerId
+             * necessary，default 'null'
+             * because we don't want to check the base apk with md5 in the runtime(it is slow)
+             * tinkerId is use to identify the unique base apk when the patch is tried to apply.
+             * we can use git rev, svn rev or simply versionCode.
+             * we will gen the tinkerId in your manifest automatic
              */
             tinkerId = getTinkerIdValue()
 
             /**
-             * 如果keepDexApply为true，则表示dex指向旧apk的类。
-             * 打开这可以减少dex diff文件大小。
+             * if keepDexApply is true, class in which dex refer to the old apk.
+             * open this can reduce the dex diff file size.
              */
             keepDexApply = false
+
+            /**
+             * optional, default 'false'
+             * Whether tinker should treat the base apk as the one being protected by app
+             * protection tools.
+             * If this attribute is true, the generated patch package will contain a
+             * dex including all changed classes instead of any dexdiff patch-info files.
+             */
+            isProtectedApp = false
+
+            /**
+             * optional, default 'false'
+             * Whether tinker should support component hotplug (add new component dynamically).
+             * If this attribute is true, the component added in new apk will be available after
+             * patch is successfully loaded. Otherwise an error would be announced when generating patch
+             * on compile-time.
+             *
+             * <b>Notice that currently this feature is incubating and only support NON-EXPORTED Activity</b>
+             */
+            supportHotplugComponent = false
         }
 
         dex {
             /**
-             * 可选，默认'jar'
-             * 只能是'raw'或'jar'。对于原始，我们将保持其原始格式
-             * 对于jar，我们将使用zip格式重新包装dexes。
-             * 如果你想支持下面14，你必须使用jar
-             * 或者你想保存rom或检查更快，你也可以使用原始模式
+             * optional，default 'jar'
+             * only can be 'raw' or 'jar'. for raw, we would keep its original format
+             * for jar, we would repack dexes with zip format.
+             * if you want to support below 14, you must use jar
+             * or you want to save rom or check quicker, you can use raw mode also
              */
             dexMode = "jar"
 
             /**
-             * 必需，默认'[]'
-             * apk中的dexes应该处理tinkerPatch
-             * 它支持*或？模式。
+             * necessary，default '[]'
+             * what dexes in apk are expected to deal with tinkerPatch
+             * it support * or ? pattern.
              */
             pattern = ["classes*.dex",
                        "assets/secondary-dex-?.jar"]
             /**
-             * 必需，默认'[]'
-             * 警告，这是非常非常重要的，加载类不能随补丁改变。
-             * 因此，它们将从补丁程序中删除。
-             * 你必须把下面的类放到主要的dex。
-             * 简单地说，你应该添加自己的应用程序{@code com.rick.tinker.demo.TheApplication}
-             * 自己的tinkerLoader，和你使用的类
+             * necessary，default '[]'
+             * Warning, it is very very important, loader classes can't change with patch.
+             * thus, they will be removed from patch dexes.
+             * you must put the following class into main dex.
+             * Simply, you should add your own application {@code tinker.sample.android.SampleApplication}
+             * own tinkerLoader, and the classes you use in them
              *
              */
             loader = [
@@ -249,78 +329,78 @@ if (buildWithTinker()) {
 
         lib {
             /**
-             可选，默认'[]'
-             apk中的图书馆应该处理tinkerPatch
-             它支持*或？模式。
-             对于资源库，我们只是在补丁目录中恢复它们
-             你可以得到他们在TinkerLoadResult与Tinker
+             * optional，default '[]'
+             * what library in apk are expected to deal with tinkerPatch
+             * it support * or ? pattern.
+             * for library in assets, we would just recover them in the patch directory
+             * you can get them in TinkerLoadResult with Tinker
              */
-            pattern = ["lib/armeabi/*.so"]
+            pattern = ["lib/*/*.so"]
         }
 
         res {
             /**
-             * 可选，默认'[]'
-             * apk中的什么资源应该处理tinkerPatch
-             * 它支持*或？模式。
-             * 你必须包括你在这里的所有资源，
-             * 否则，他们不会重新包装在新的apk资源。
+             * optional，default '[]'
+             * what resource in apk are expected to deal with tinkerPatch
+             * it support * or ? pattern.
+             * you must include all your resources in apk here,
+             * otherwise, they won't repack in the new apk resources.
              */
             pattern = ["res/*", "assets/*", "resources.arsc", "AndroidManifest.xml"]
 
             /**
-             * 可选，默认'[]'
-             * 资源文件排除模式，忽略添加，删除或修改资源更改
-             * *它支持*或？模式。
-             * *警告，我们只能使用文件没有relative与resources.arsc
+             * optional，default '[]'
+             * the resource file exclude patterns, ignore add, delete or modify resource change
+             * it support * or ? pattern.
+             * Warning, we can only use for files no relative with resources.arsc
              */
-            ignoreChange = ["assets/test_meta.txt"]
+            ignoreChange = ["assets/sample_meta.txt"]
 
             /**
-             * 默认100kb
-             * *对于修改资源，如果它大于'largeModSize'
-             * *我们想使用bsdiff算法来减少补丁文件的大小
+             * default 100kb
+             * for modify resource, if it is larger than 'largeModSize'
+             * we would like to use bsdiff algorithm to reduce patch file size
              */
             largeModSize = 100
         }
 
         packageConfig {
             /**
-             * 可选，默认'TINKER_ID，TINKER_ID_VALUE'，'NEW_TINKER_ID，NEW_TINKER_ID_VALUE'
-             * 包元文件gen。路径是修补程序文件中的assets / package_meta.txt
-             * 你可以在您自己的PackageCheck方法中使用securityCheck.getPackageProperties（）
-             * 或TinkerLoadResult.getPackageConfigByName
-             * 我们将从旧的apk清单为您自动获取TINKER_ID，
-             * 其他配置文件（如下面的patchMessage）不是必需的
+             * optional，default 'TINKER_ID, TINKER_ID_VALUE' 'NEW_TINKER_ID, NEW_TINKER_ID_VALUE'
+             * package meta file gen. path is assets/package_meta.txt in patch file
+             * you can use securityCheck.getPackageProperties() in your ownPackageCheck method
+             * or TinkerLoadResult.getPackageConfigByName
+             * we will get the TINKER_ID from the old apk manifest for you automatic,
+             * other config files (such as patchMessage below)is not necessary
              */
             configField("patchMessage", "tinker is sample to use")
             /**
-             * 只是一个例子，你可以使用如sdkVersion，品牌，渠道...
-             * 你可以在SamplePatchListener中解析它。
-             * 然后你可以使用补丁条件！
+             * just a sample case, you can use such as sdkVersion, brand, channel...
+             * you can parse it in the SamplePatchListener.
+             * Then you can use patch conditional!
              */
             configField("platform", "all")
             /**
-             * 补丁版本通过packageConfig
+             * patch version via packageConfig
              */
             configField("patchVersion", "1.0")
         }
-        //或者您可以添加外部的配置文件，或从旧apk获取元值
+        //or you can add config filed outside, or get meta value from old apk
         //project.tinkerPatch.packageConfig.configField("test1", project.tinkerPatch.packageConfig.getMetaDataFromOldApk("Test"))
         //project.tinkerPatch.packageConfig.configField("test2", "sample")
 
         /**
-         * 如果你不使用zipArtifact或者path，我们只是使用7za来试试
+         * if you don't use zipArtifact or path, we just use 7za to try
          */
         sevenZip {
             /**
-             * 可选，默认'7za'
-             * 7zip工件路径，它将使用正确的7za与您的平台
+             * optional，default '7za'
+             * the 7zip artifact path, it will use the right 7za with your platform
              */
             zipArtifact = "com.tencent.mm:SevenZip:1.1.10"
             /**
-             * 可选，默认'7za'
-             * 你可以自己指定7za路径，它将覆盖zipArtifact值
+             * optional，default '7za'
+             * you can specify the 7za path yourself, it will overwrite the zipArtifact value
              */
 //        path = "/usr/local/bin/7za"
         }
@@ -331,8 +411,8 @@ if (buildWithTinker()) {
     project.android.productFlavors.each { flavor ->
         flavors.add(flavor.name)
     }
-
     boolean hasFlavors = flavors.size() > 0
+    def date = new Date().format("yyMMdd-HH-mm-ss")
 
     /**
      * bak apk and mapping
@@ -343,7 +423,6 @@ if (buildWithTinker()) {
          * task type, you want to bak
          */
         def taskName = variant.name
-        def date = new Date().format("yyMMdd")//"MMdd-HH-mm-ss"
 
         tasks.all {
             if ("assemble${taskName.capitalize()}".equalsIgnoreCase(it.name)) {
@@ -351,10 +430,10 @@ if (buildWithTinker()) {
                 it.doLast {
                     copy {
                         def fileNamePrefix = "${project.name}-${variant.baseName}"
-                        def newFileNamePrefix = hasFlavors ? "${fileNamePrefix}" : "${project.name}_${versionName}_${variant.baseName}_${rootProject.ext.channelId}"
+                        def newFileNamePrefix = hasFlavors ? "${fileNamePrefix}" : "${fileNamePrefix}-${date}"
 
-                        def destPath = hasFlavors ? file("${tinkerOutPath}/${project.name}_${date}/${variant.flavorName}") : tinkerOutPath
-                        from variant.outputs.outputFile
+                        def destPath = hasFlavors ? file("${bakPath}/${project.name}-${date}/${variant.flavorName}") : bakPath
+                        from variant.outputs.first().outputFile
                         into destPath
                         rename { String fileName ->
                             fileName.replace("${fileNamePrefix}.apk", "${newFileNamePrefix}.apk")
@@ -363,13 +442,13 @@ if (buildWithTinker()) {
                         from "${buildDir}/outputs/mapping/${variant.dirName}/mapping.txt"
                         into destPath
                         rename { String fileName ->
-                            fileName.replace("mapping.txt", "${newFileNamePrefix}_mapping.txt")
+                            fileName.replace("mapping.txt", "${newFileNamePrefix}-mapping.txt")
                         }
 
                         from "${buildDir}/intermediates/symbols/${variant.dirName}/R.txt"
                         into destPath
                         rename { String fileName ->
-                            fileName.replace("R.txt", "${newFileNamePrefix}_R.txt")
+                            fileName.replace("R.txt", "${newFileNamePrefix}-R.txt")
                         }
                     }
                 }
@@ -400,10 +479,12 @@ if (buildWithTinker()) {
                     def preAssembleTask = tasks.getByName("process${flavor.capitalize()}ReleaseManifest")
                     preAssembleTask.doFirst {
                         String flavorName = preAssembleTask.name.substring(7, 8).toLowerCase() + preAssembleTask.name.substring(8, preAssembleTask.name.length() - 15)
-                        project.tinkerPatch.oldApk = "${originOldPath}/${flavorName}/${project.name}_${flavorName}_release.apk"
-                        project.tinkerPatch.buildConfig.applyMapping = "${originOldPath}/${flavorName}/${project.name}_${flavorName}_release_mapping.txt"
-                        project.tinkerPatch.buildConfig.applyResourceMapping = "${originOldPath}/${flavorName}/${project.name}_${flavorName}_release_R.txt"
+                        project.tinkerPatch.oldApk = "${originOldPath}/${flavorName}/${project.name}-${flavorName}-release.apk"
+                        project.tinkerPatch.buildConfig.applyMapping = "${originOldPath}/${flavorName}/${project.name}-${flavorName}-release-mapping.txt"
+                        project.tinkerPatch.buildConfig.applyResourceMapping = "${originOldPath}/${flavorName}/${project.name}-${flavorName}-release-R.txt"
+
                     }
+
                 }
             }
 
@@ -416,9 +497,9 @@ if (buildWithTinker()) {
                     def preAssembleTask = tasks.getByName("process${flavor.capitalize()}DebugManifest")
                     preAssembleTask.doFirst {
                         String flavorName = preAssembleTask.name.substring(7, 8).toLowerCase() + preAssembleTask.name.substring(8, preAssembleTask.name.length() - 13)
-                        project.tinkerPatch.oldApk = "${originOldPath}/${flavorName}/${project.name}_${flavorName}_debug.apk"
-                        project.tinkerPatch.buildConfig.applyMapping = "${originOldPath}/${flavorName}/${project.name}_${flavorName}_debug_mapping.txt"
-                        project.tinkerPatch.buildConfig.applyResourceMapping = "${originOldPath}/${flavorName}/${project.name}_${flavorName}_debug_R.txt"
+                        project.tinkerPatch.oldApk = "${originOldPath}/${flavorName}/${project.name}-${flavorName}-debug.apk"
+                        project.tinkerPatch.buildConfig.applyMapping = "${originOldPath}/${flavorName}/${project.name}-${flavorName}-debug-mapping.txt"
+                        project.tinkerPatch.buildConfig.applyResourceMapping = "${originOldPath}/${flavorName}/${project.name}-${flavorName}-debug-R.txt"
                     }
 
                 }

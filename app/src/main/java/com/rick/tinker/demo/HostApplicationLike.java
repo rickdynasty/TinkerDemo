@@ -8,6 +8,7 @@ import android.os.Build;
 import android.support.multidex.MultiDex;
 import android.widget.Toast;
 
+import com.rick.tinker.demo.service.ForPatchService;
 import com.tencent.tinker.anno.DefaultLifeCycle;
 import com.tencent.tinker.lib.listener.DefaultPatchListener;
 import com.tencent.tinker.lib.patch.UpgradePatch;
@@ -20,7 +21,7 @@ import com.tencent.tinker.loader.shareutil.ShareConstants;
 
 
 @SuppressWarnings("unused")
-@DefaultLifeCycle(application = "com.rick.tinker.demo.TheApplication",
+@DefaultLifeCycle(application = "com.rick.tinker.demo.app.SampleApplication",
         flags = ShareConstants.TINKER_ENABLE_ALL,
         loadVerifyFlag = false)
 public class HostApplicationLike extends DefaultApplicationLike {

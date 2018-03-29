@@ -1,4 +1,4 @@
-package com.rick.tinker.demo;
+package com.rick.tinker.demo.service;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

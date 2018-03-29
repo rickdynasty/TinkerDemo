@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="10dp"
-        android:text="@string/test_des"
+        android:paddingTop="10dp"
+        android:text=""
         android:textSize="20sp" />
 
     <Button
@@ -19,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="15dp"
         android:text="加载补丁"
         android:textColor="#FD4A2E" />
 
@@ -38,13 +39,5 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="5dp"
         android:text="test功能" />
-
-    <ImageView
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="5dp"
-        android:src="@mipmap/tinker_added" />
-
 
 </LinearLayout>
